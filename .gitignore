@@ -47,3 +47,19 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+result/censored/*
+result/noncensored/*
+result/simulation_data/*
+
+!result/censored/.gitkeep
+!result/noncensored/.gitkeep
+!result/simulation_data/.gitkeep
+
+data/base/*
+data/censored/*
+data/noncensored/*
+
+!data/censored/.gitkeep
+!data/noncensored/.gitkeep
+!data/base/.gitkeep
