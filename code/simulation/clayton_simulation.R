@@ -1,7 +1,6 @@
 library(survival);
 library(pROC);
 library(mnormt)
-library(MLEcens);
 library(bayesSurv);
 source('../cOPT/R/opt2d.R');
 source('../cOPT/R/dabrowska.R');

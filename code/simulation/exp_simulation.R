@@ -16,10 +16,10 @@ rowVars = function(E,na.rm=FALSE) {
   return( v );
 }
 
-# data on the uniform distribution
-random_data_surv = function(N,of=0) {
-  T1 = runif(N,0,1); T2 = T1 + runif(N,0,1); T3 = T2 + runif(N,0,1);
-  C1 = runif(N,0,1)+of; C2 = runif(N,0,2)+of; C3 = runif(N,0,3)+of;
+random_data_surv = function(N,lt=1,lc=1/2,of=0) {
+  # T1 = rexp(N,lt); T2 = T1 + rexp(N,lt) + rnorm(N,0,1); T3 = T2 + rexp(N,lt) + rnorm(N,0,1);
+  T1 = rexp(N,lt); T2 = T1 + rexp(N,lt); T3 = T2 + rexp(N,lt);
+  C1 = rexp(N,lc)+of; C2 = rexp(N,lc)+of; C3 = rexp(N,lc)+of
   X1 = Surv(apply(cbind(T1,C1),1,min),(T1<=C1) );
   X2 = Surv(apply(cbind(T2,C2),1,min),(T2<=C2) );
   X3 = Surv(apply(cbind(T3,C3),1,min),(T3<=C3) );
@@ -31,7 +31,7 @@ random_data_surv = function(N,of=0) {
   return( list(X=X, A=A, T=cbind(T1,T2,T3)) );
 }
 
-folder_= '../../result/simulation_data/X_uniform_simulation'
+folder_= '../../result/simulation_data/X_exp_simulation'
 ifelse(dir.exists(folder_), 'Folder exists already', dir.create(folder_))
 
 prAB_result = data.frame()
