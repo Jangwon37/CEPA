@@ -81,15 +81,14 @@ for(loop in 1:100){
       
       prAB_value = PrAB(result.opt)[1]
       
-      
-      # dabrowska
-      
-      outputfile_db = sprintf("%s/%s/dabrowska_output.surv%s%s.txt", folder_,loop,i,j);
-      
       MIN = floor(min(simul_data_A));
       MAX = ceiling(max(simul_data_A));
       A = seq(from = MIN, to = MAX, by = (MAX-MIN)/5);
       X_surv = cbind(as.data.frame(Surv(RECOV.EVENT[,2*i-1], RECOV.EVENT[,2*i])), Surv(RECOV.EVENT[,2*j-1], RECOV.EVENT[,2*j]))
+      
+      # dabrowska
+      
+      outputfile_db = sprintf("%s/%s/dabrowska_output.surv%s%s.txt", folder_,loop,i,j);
       
       TM = NULL;
       for( aaa in A ) { for( bbb in A )  TM = rbind(TM,c(aaa,bbb)); }
