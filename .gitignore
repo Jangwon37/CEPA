@@ -63,3 +63,8 @@ data/noncensored/*
 !data/censored/.gitkeep
 !data/noncensored/.gitkeep
 !data/base/.gitkeep
+
+code/simulation/4_clayton.R
+code/simulation/4_uniform.R
+code/simulation/4_logn.R
+code/simulation/4_exp.R
