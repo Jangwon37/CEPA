@@ -34,13 +34,29 @@ random_data_surv = function(N,lambda=1/2,q=1,of=0) {
   return( list(X=X, A=A, T=cbind(T1,T2,T3)) );
 }
 
-folder_= '../../result/simulation_data/X_clayton_simulation'
+folder_= '../../result/simulation_data/clayton'
 ifelse(dir.exists(folder_), 'Folder exists already', dir.create(folder_))
 
-prAB_result = data.frame()
-prAB_result_db = data.frame()
+if (!file.exists(sprintf("%s/prAB_result.csv", folder_))) {
+  prAB_result = data.frame()
+  prAB_result_db = data.frame()
+  prAB_result_ly = data.frame()
+}
 
-for(loop in 1:100){
+
+file_names <- list.files(path = folder_)
+numeric_files <- as.numeric(gsub(pattern = "\\..*$", replacement = "", file_names))
+numeric_files <- numeric_files[!is.na(numeric_files)]
+
+if(length(numeric_files) == 0) {
+  loop_start <- 1
+} else if(length(numeric_files) == 100) {
+  stop("finish")
+} else {
+  loop_start <- max(numeric_files)
+}
+
+for(loop in loop_start:100){
   
   ifelse(dir.exists(sprintf("%s/%s/",folder_,loop)), 'Folder exists already', dir.create(sprintf("%s/%s/",folder_,loop)))
   
@@ -62,8 +78,8 @@ for(loop in 1:100){
   RECOV.EVENT <- read.csv(sprintf('%s/%s/output.random_data_sim_X.csv', folder_, loop), row.names = 1)
   
   prAB_values = data.frame()
-  
   prAB_values_db = data.frame()
+  prAB_values_ly = data.frame()
   
   for(i in 1:2){
     for(j in (i+1):3){
@@ -135,36 +151,53 @@ for(loop in 1:100){
       if(prAB_value_ly<0){prAB_value_ly = 0.01}
       
       
-      ifelse((i==1 & j==2), prAB_values <- prAB_value, prAB_values <- cbind(prAB_values, prAB_value))
-      ifelse((i==1 & j==2), prAB_values_db <- prAB_value_db, prAB_values_db <- cbind(prAB_values_db, prAB_value_db))
-      ifelse((i==1 & j==2), prAB_values_ly <- prAB_value_ly, prAB_values_ly <- cbind(prAB_values_ly, prAB_value_ly))
+      if (i == 1 & j == 2) {
+        prAB_values <- prAB_value
+        prAB_values_db <- prAB_value_db
+        prAB_values_ly <- prAB_value_ly
+      } else {
+        prAB_values <- cbind(prAB_values, prAB_value)
+        prAB_values_db <- cbind(prAB_values_db, prAB_value_db)
+        prAB_values_ly <- cbind(prAB_values_ly, prAB_value_ly)
+      }
+      
     }
+    
   }
   
-  rownames(prAB_values) = c(loop)
-  rownames(prAB_values_db) = c(loop)
-  rownames(prAB_values_ly) = c(loop)
+  if(loop == 1) {
+    prAB_result <- prAB_values
+    prAB_result_db <- prAB_values_db
+    prAB_result_ly <- prAB_values_ly
+    
+    colnames(prAB_result) <- c("12", "13", "23")
+    colnames(prAB_result_db) <- c("12", "13", "23")
+    colnames(prAB_result_ly) <- c("12", "13", "23")
+    
+  } else {
+    prAB_result <- rbind(prAB_result, prAB_values)
+    prAB_result_db <- rbind(prAB_result_db, prAB_values_db)
+    prAB_result_ly <- rbind(prAB_result_ly, prAB_values_ly)
+  }
   
-  ifelse((loop == 1), 
-         prAB_result <- prAB_values, 
-         prAB_result <- rbind(prAB_result, prAB_values))
+  write.csv(prAB_result, 
+            file=sprintf("%s/prAB_result.csv", folder_), 
+            append=FALSE, 
+            col.names=FALSE, 
+            row.names=FALSE)
   
-  ifelse((loop == 1), 
-         prAB_result_db <- prAB_values_db, 
-         prAB_result_db <- rbind(prAB_result_db, prAB_values_db))
+  write.csv(prAB_result_db, 
+            file=sprintf("%s/prAB_result_dabrowska.csv", folder_), 
+            append=FALSE, 
+            col.names=FALSE, 
+            row.names=FALSE)
   
-  ifelse((loop == 1), 
-         prAB_result_ly <- prAB_values_ly, 
-         prAB_result_ly <- rbind(prAB_result_ly, prAB_values_ly))
+  write.csv(prAB_result_ly, 
+            file=sprintf("%s/prAB_result_linying.csv", folder_), 
+            append=FALSE, 
+            col.names=FALSE, 
+            row.names=FALSE)
+  
   
 }
-
-
-colnames(prAB_result) = c("X1 & X2", "X1 & X3", "X2 & X3")
-colnames(prAB_result_db) = c("X1 & X2", "X1 & X3", "X2 & X3")
-colnames(prAB_result_ly) = c("X1 & X2", "X1 & X3", "X2 & X3")
-
-write.csv(prAB_result, file=sprintf("%s/prAB_result.csv", folder_))
-write.csv(prAB_result_db, file=sprintf("%s/prAB_result_dabrowska.csv", folder_))
-write.csv(prAB_result_ly, file=sprintf("%s/prAB_result_linying.csv", folder_))
 

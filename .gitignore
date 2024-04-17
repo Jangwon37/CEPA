@@ -50,11 +50,17 @@ rsconnect/
 
 result/censored/*
 result/noncensored/*
-result/simulation_data/*
+result/simulation_data/uniform/*
+result/simulation_data/logn/*
+result/simulation_data/exp/*
+result/simulation_data/clayton/*
 
 !result/censored/.gitkeep
 !result/noncensored/.gitkeep
-!result/simulation_data/.gitkeep
+!result/simulation_data/uniform/.gitkeep
+!result/simulation_data/logn/.gitkeep
+!result/simulation_data/exp/.gitkeep
+!result/simulation_data/calyton/.gitkeep
 
 data/base/*
 data/censored/*
@@ -64,7 +70,7 @@ data/noncensored/*
 !data/noncensored/.gitkeep
 !data/base/.gitkeep
 
-code/simulation/4_clayton.R
-code/simulation/4_uniform.R
-code/simulation/4_logn.R
-code/simulation/4_exp.R
+code/simulation/clayton_simulation.R
+code/simulation/uniform_simulation.R
+code/simulation/logn_simulation.R
+code/simulation/exp_simulation.R

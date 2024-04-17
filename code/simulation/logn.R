@@ -1,4 +1,7 @@
 library(survival);
+library(MLEcens);
+library(pROC);
+library(mnormt)
 source('../cOPT/R/opt2d.R');
 source('../cOPT/R/dabrowska.R');
 source('../cOPT/R/linying.R');
@@ -13,30 +16,36 @@ rowVars = function(E,na.rm=FALSE) {
   return( v );
 }
 
-random_data_surv = function(N,lt=1,lc=1/2,of=0) {
-  # T1 = rexp(N,lt); T2 = T1 + rexp(N,lt) + rnorm(N,0,1); T3 = T2 + rexp(N,lt) + rnorm(N,0,1);
-  T1 = rexp(N,lt); T2 = T1 + rexp(N,lt); T3 = T2 + rexp(N,lt);
-  C1 = rexp(N,lc)+of; C2 = rexp(N,lc)+of; C3 = rexp(N,lc)+of
+random_data_lognorm = function(N,TR=0.5,CR=0,of=0) {
+  if( TR == 1 ) {
+    T1 = T2 = T3 = exp(rnorm(N,0,1));
+  } else {
+    T = rmnorm(N,c(0,0.5,1),matrix(c(1,TR,TR,TR,1,TR,TR,TR,1),nrow=3));
+    T1 = exp(T[,1]); T2 = exp(T[,2]); T3 = exp(T[,3])
+  }
+  if( CR == 1 ) {
+    C1 = C2 = C3 = exp(rnorm(N,0,1))+of;
+  } else {
+    C = rmnorm(N,c(0,0,0),matrix(c(1,CR,CR,CR,1,CR,CR,CR,1),nrow=3));
+    C1 = exp(C[,1]+of); C2 = exp(C[,2]+of); C3 = exp(C[,3]+of)
+  }
   X1 = Surv(apply(cbind(T1,C1),1,min),(T1<=C1) );
   X2 = Surv(apply(cbind(T2,C2),1,min),(T2<=C2) );
   X3 = Surv(apply(cbind(T3,C3),1,min),(T3<=C3) );
-  X = cbind(as.data.frame(X1),X2, X3); colnames(X) = c('X1','X2','X3');
+  X = cbind(as.data.frame(X1),X2,X3); colnames(X) = c('X1','X2','X3');
   A = c(0,max(X1[,1])*1.1,max(X2[,1])*1.1,max(X3[,1])*1.1);
-  # X: bivariate survival times
-  # A: region of interest
-  # T: true event times
   return( list(X=X, A=A, T=cbind(T1,T2,T3)) );
 }
 
-folder_= '../../result/simulation_data/exp'
+folder_= '../../result/simulation_data/logn'
 ifelse(dir.exists(folder_), 'Folder exists already', dir.create(folder_))
 
 if (!file.exists(sprintf("%s/prAB_result.csv", folder_))) {
   prAB_result = data.frame()
   prAB_result_db = data.frame()
   prAB_result_ly = data.frame()
+  prAB_result_mle = data.frame()
 }
-
 
 file_names <- list.files(path = folder_)
 numeric_files <- as.numeric(gsub(pattern = "\\..*$", replacement = "", file_names))
@@ -56,9 +65,9 @@ for(loop in loop_start:100){
   
   print(loop)
   
-  simul_data_X = data.frame(random_data_surv(500)[1])
-  simul_data_A = data.frame(random_data_surv(500)[2])
-  simul_data_T = data.frame(random_data_surv(500)[3])
+  simul_data_X = data.frame(random_data_lognorm(500)[1])
+  simul_data_A = data.frame(random_data_lognorm(500)[2])
+  simul_data_T = data.frame(random_data_lognorm(500)[3])
   
   outputfile_X = sprintf("%s/%s/output.random_data_sim_X.csv", folder_, loop);
   write.csv(simul_data_X, file=outputfile_X)
@@ -74,6 +83,7 @@ for(loop in loop_start:100){
   prAB_values = data.frame()
   prAB_values_db = data.frame()
   prAB_values_ly = data.frame()
+  prAB_values_mle = data.frame()
   
   for(i in 1:2){
     for(j in (i+1):3){
@@ -145,14 +155,46 @@ for(loop in loop_start:100){
       if(prAB_value_ly<0){prAB_value_ly = 0.01}
       
       
+      # MLEcens esimates
+      epsilon = 1e-6
+      outputfile_mle = sprintf("%s/%s/mlecens_output.surv%s%s.txt", folder_,loop,i,j);
+      TTE = cbind(round(RECOV.EVENT[,2*i-1],digits = 2),round(RECOV.EVENT[,2*i], digits = 2),round(RECOV.EVENT[,2*j-1], digits = 2),round(RECOV.EVENT[,2*j], digits = 2));
+      
+      RR <- matrix(ncol = ncol(TTE), nrow = nrow(TTE))
+      RR[,1] <- TTE[,1] * (1 - TTE[,2])
+      RR[,2] <- TTE[,1] + TTE[,2]+ epsilon
+      RR[,3] <- TTE[,3] * (1 - TTE[,4])
+      RR[,4] <- TTE[,3] + TTE[,4]+ epsilon
+      
+      mle = computeMLE(R=RR, B=c(1,1,1,1));
+      SS = NULL;
+      for( ii in 1:nrow(mle$rects)){
+        SS = rbind(SS,c(mle$rects[ii,1],mle$rects[ii,2],mle$rects[ii,3],mle$rects[ii,4],0,mle$p[ii]));
+      }
+      SS[,5] = SS[,6]/(SS[,2]-SS[,1])/(SS[,4]-SS[,3]);
+      Smle = SS;
+      
+      prAB_value_mle = PrAB(Smle,MAX,MAX)[1]
+      
+      if (is.na(prAB_value_mle)) {
+        prAB_value_mle <- 0.01
+      } else {
+        
+        if(prAB_value_mle>1){prAB_value_mle = 0.99}
+        if(prAB_value_mle<0){prAB_value_mle = 0.01}
+      }
+      
+      
       if (i == 1 & j == 2) {
         prAB_values <- prAB_value
         prAB_values_db <- prAB_value_db
         prAB_values_ly <- prAB_value_ly
+        prAB_values_mle <- prAB_value_mle
       } else {
         prAB_values <- cbind(prAB_values, prAB_value)
         prAB_values_db <- cbind(prAB_values_db, prAB_value_db)
         prAB_values_ly <- cbind(prAB_values_ly, prAB_value_ly)
+        prAB_values_mle <- cbind(prAB_values_mle, prAB_value_mle)
       }
       
     }
@@ -163,15 +205,18 @@ for(loop in loop_start:100){
     prAB_result <- prAB_values
     prAB_result_db <- prAB_values_db
     prAB_result_ly <- prAB_values_ly
+    prAB_result_mle <- prAB_values_mle
     
     colnames(prAB_result) <- c("12", "13", "23")
     colnames(prAB_result_db) <- c("12", "13", "23")
     colnames(prAB_result_ly) <- c("12", "13", "23")
+    colnames(prAB_result_mle) <- c("12", "13", "23")
     
   } else {
     prAB_result <- rbind(prAB_result, prAB_values)
     prAB_result_db <- rbind(prAB_result_db, prAB_values_db)
     prAB_result_ly <- rbind(prAB_result_ly, prAB_values_ly)
+    prAB_result_mle <- rbind(prAB_result_mle, prAB_values_mle)
   }
   
   write.csv(prAB_result, 
@@ -192,6 +237,11 @@ for(loop in loop_start:100){
             col.names=FALSE, 
             row.names=FALSE)
   
+  write.csv(prAB_result_mle, 
+            file=sprintf("%s/prAB_result_mle.csv", folder_), 
+            append=FALSE, 
+            col.names=FALSE, 
+            row.names=FALSE)
   
 }
 
