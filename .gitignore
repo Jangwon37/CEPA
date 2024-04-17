@@ -60,7 +60,7 @@ result/simulation_data/clayton/*
 !result/simulation_data/uniform/.gitkeep
 !result/simulation_data/logn/.gitkeep
 !result/simulation_data/exp/.gitkeep
-!result/simulation_data/calyton/.gitkeep
+!result/simulation_data/clayton/.gitkeep
 
 data/base/*
 data/censored/*
