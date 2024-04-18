@@ -74,3 +74,6 @@ code/simulation/clayton_simulation.R
 code/simulation/uniform_simulation.R
 code/simulation/logn_simulation.R
 code/simulation/exp_simulation.R
+code/simulation/loop.R
+
+result/simulation_data_ex/
