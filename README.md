@@ -7,8 +7,9 @@ Censored Multiple Event Precedence Analysis for a Cohort based on Nonparametric 
 ```
 ├── code
 │   ├── R file.R 
-│   ├── simulation
 │   ├── score
+│   ├── simulation
+│       ├── simulation.R
 │ 
 ├── data
 ├── result
@@ -20,6 +21,6 @@ In order to execute R in this specific directory, please ensure you navigate to 
 cd code/simulation/
 chmod +x ../cOPT/copt
 R
-> source("R file.R")
+> source("simulation.R")
 ```
 
