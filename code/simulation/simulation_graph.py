@@ -36,7 +36,7 @@ def graph_result(sim_name, sim_path):
     fig, ax = plt.subplots()
     ax.boxplot([copt_data, dabrowska_data, linying_data, count_data], vert=True, sym='')
     ax.grid(color='grey', axis='y', linestyle='-', linewidth=0.25, alpha=0.8)
-    plt.xticks([1, 2, 3, 4, 5], ['CEPA', 'Dabroska', 'Linying', 'Naive'], fontsize=16)
+    plt.xticks([1, 2, 3, 4], ['CEPA', 'Dabroska', 'Linying', 'Naive'], fontsize=16)
     plt.yticks(fontsize=16)
     plt.ylabel('Likelihood', fontsize=16)
     plt.savefig('%s/%s_box.tiff' % (sim_path, sim_name), dpi=300)
