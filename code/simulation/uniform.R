@@ -73,7 +73,6 @@ for(loop in loop_start:100){
   prAB_values = data.frame()
   prAB_values_db = data.frame()
   prAB_values_ly = data.frame()
-  prAB_values_mle = data.frame()
   
   for(i in 1:2){
     for(j in (i+1):3){

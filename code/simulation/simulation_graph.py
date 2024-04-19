@@ -25,18 +25,17 @@ def graph_result(sim_name, sim_path):
     copt_result_data = np.array(pd.read_csv("%s/prAB_result.csv" %sim_path, index_col=None))
     dabrowska_result_data = np.array(pd.read_csv("%s/prAB_result_dabrowska.csv" % sim_path, index_col=None))
     linying_result_data = np.array(pd.read_csv("%s/prAB_result_linying.csv" % sim_path, index_col=None))
-    mlecens_result_data = np.array(pd.read_csv("%s/prAB_result_mle.csv" % sim_path, index_col=None))
 
     copt_data = precedence_P(copt_result_data)
     dabrowska_data = precedence_P(dabrowska_result_data)
     linying_data = precedence_P(linying_result_data)
     mle_data = precedence_P(mlecens_result_data)
 
-    print("%s \ncopt: %s \ndabroska: %s \nlinying: %s \nmlecens: %s \ncount: %s\n"
-        % (sim_name, round(np.mean(copt_data), 4), round(np.mean(dabrowska_data), 4), round(np.mean(linying_data), 4), round(np.mean(mle_data), 4), round(np.mean(count_data), 4)))
+    print("%s \ncopt: %s \ndabroska: %s \nlinying: %s \ncount: %s\n"
+        % (sim_name, round(np.mean(copt_data), 4), round(np.mean(dabrowska_data), 4), round(np.mean(linying_data), 4), round(np.mean(count_data), 4)))
 
     fig, ax = plt.subplots()
-    ax.boxplot([copt_data, dabrowska_data, linying_data, mle_data, count_data], vert=True, sym='')
+    ax.boxplot([copt_data, dabrowska_data, linying_data, count_data], vert=True, sym='')
     ax.grid(color='grey', axis='y', linestyle='-', linewidth=0.25, alpha=0.8)
     plt.xticks([1, 2, 3, 4, 5], ['CEPA', 'Dabroska', 'Linying', 'MLEcens', 'Naive'], fontsize=16)
     plt.yticks(fontsize=16)
