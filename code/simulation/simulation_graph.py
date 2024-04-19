@@ -29,7 +29,6 @@ def graph_result(sim_name, sim_path):
     copt_data = precedence_P(copt_result_data)
     dabrowska_data = precedence_P(dabrowska_result_data)
     linying_data = precedence_P(linying_result_data)
-    mle_data = precedence_P(mlecens_result_data)
 
     print("%s \ncopt: %s \ndabroska: %s \nlinying: %s \ncount: %s\n"
         % (sim_name, round(np.mean(copt_data), 4), round(np.mean(dabrowska_data), 4), round(np.mean(linying_data), 4), round(np.mean(count_data), 4)))
@@ -37,7 +36,7 @@ def graph_result(sim_name, sim_path):
     fig, ax = plt.subplots()
     ax.boxplot([copt_data, dabrowska_data, linying_data, count_data], vert=True, sym='')
     ax.grid(color='grey', axis='y', linestyle='-', linewidth=0.25, alpha=0.8)
-    plt.xticks([1, 2, 3, 4, 5], ['CEPA', 'Dabroska', 'Linying', 'MLEcens', 'Naive'], fontsize=16)
+    plt.xticks([1, 2, 3, 4, 5], ['CEPA', 'Dabroska', 'Linying', 'Naive'], fontsize=16)
     plt.yticks(fontsize=16)
     plt.ylabel('Likelihood', fontsize=16)
     plt.savefig('%s/%s_box.tiff' % (sim_path, sim_name), dpi=300)
