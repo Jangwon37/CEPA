@@ -34,6 +34,8 @@ def graph_result(sim_name, sim_path):
         % (sim_name, round(np.mean(copt_data), 4), round(np.mean(dabrowska_data), 4), round(np.mean(linying_data), 4), round(np.mean(count_data), 4)))
 
     fig, ax = plt.subplots()
+    means = [np.mean(copt_data), np.mean(dabrowska_data), np.mean(linying_data), np.mean(count_data)]
+    ax.scatter([1, 2, 3, 4], means, marker='^', color='black', zorder=3, s=20, label='Mean')
     ax.boxplot([copt_data, dabrowska_data, linying_data, count_data], vert=True, sym='')
     ax.grid(color='grey', axis='y', linestyle='-', linewidth=0.25, alpha=0.8)
     plt.xticks([1, 2, 3, 4], ['CEPA', 'Dabroska', 'Linying', 'Naive'], fontsize=16)
