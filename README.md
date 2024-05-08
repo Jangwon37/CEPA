@@ -1,6 +1,7 @@
 # CEPA
 Censored Multiple Event Precedence Analysis for a Cohort based on Nonparametric Bayesian Estimation
-![figure1](https://github.com/Jangwon37/CEPA/assets/99333410/06165b9a-ed97-43fd-a321-b50eb09782cd)
+![그림1](https://github.com/Jangwon37/CEPA/assets/99333410/5735472d-f917-4817-a1bb-0a1e9c84a916)
+
 
 
 ### Structure of directory
