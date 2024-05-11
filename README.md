@@ -7,8 +7,8 @@
 ├── code
 │   ├── R file.R 
 │   ├── score
-│   ├── simulation
-│       └──simulation.R
+│   └── simulation
+│       └── simulation.R
 ├── data
 └── result
 ```
