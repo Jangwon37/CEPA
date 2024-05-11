@@ -8,10 +8,9 @@
 │   ├── R file.R 
 │   ├── score
 │   ├── simulation
-│       ├── simulation.R
-│ 
+│       └──simulation.R
 ├── data
-├── result
+└── result
 ```
 
 ## Run Simulation
