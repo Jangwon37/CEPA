@@ -1,6 +1,8 @@
 # CEPA
 ### Censored Multiple Event Precedence Analysis for a Cohort based on Nonparametric Bayesian Estimation
+Prioritizing Disease Diagnosis in Neonatal Cohorts through Multivariate Survival Analysis: A Nonparametric Bayesian Approach
 https://doi.org/10.3390/healthcare12090939
+
 ![figure1](https://github.com/Jangwon37/CEPA/assets/99333410/98e355d8-5b54-4e9f-8fb0-23131b75da24)
 
 ## Structure of directory
